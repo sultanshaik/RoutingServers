@@ -3,3 +3,6 @@ customer1.us.ca.sjc
 customer2.us.tx.dfw
 customer2.cn.tw.tai
 customer10.us.ny.nyc
+customer10.us.ny
+customer10.us.ny.
+customer10.us.ny.pkb
