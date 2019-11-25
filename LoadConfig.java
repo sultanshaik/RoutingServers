@@ -10,62 +10,72 @@ public class LoadConfig{
 
     LoadConfig() throws FileNotFoundException{
 
-
+        //Reading the config file
         String localDir = System.getProperty("user.dir");
         File file =   new File(localDir + "//config.txt");
         Scanner sc = new Scanner(file);
 
-
+        //Creating a map that containers mapping of all rules
         customerMap = new HashMap<String,Map<String, Map<String ,Map<String,String>>>>();
+
+
         while (sc.hasNextLine()){
-            String [] serverInfo = sc.nextLine().split("=");
-            String[] serverIds = serverInfo[0].split("\\.");
+            String [] serverInfo = sc.nextLine().split("="); //Separate the server and input
+            String[] serverIds = serverInfo[0].split("\\."); //Separate the input details
 
             Map<String , Map<String,Map<String,String>>> countryMap;
             Map<String , Map<String,String>> stateMap;
             Map<String , String> cityMap;
 
-            if(customerMap.containsKey(serverIds[0])){
+            String customerType, country , state , city ,server;
 
-                if(customerMap.get(serverIds[0]).containsKey(serverIds[1])){
+            customerType = serverIds[0];
+            country = serverIds[1];
+            state    =   serverIds[2];
+            city    = serverIds[3];
+            server = serverInfo[1];
 
-                    if(customerMap.get(serverIds[0]).get(serverIds[1]).containsKey(serverIds[2])){
-                        customerMap.get(serverIds[0]).get(serverIds[1]).get(serverIds[2]).put(serverIds[3] , serverInfo[1]);
-                    }
-                    else{
-                        cityMap = new HashMap<String,String>();
-                        cityMap.put(serverIds[3] , serverInfo[1]);
-                        customerMap.get(serverIds[0]).get(serverIds[1]).put(serverIds[2],cityMap);
-                    }
-                }
-                else{
-
-                    cityMap = new HashMap<String,String>();
-                    cityMap.put(serverIds[3] , serverInfo[1]);
-
-                    stateMap = new HashMap<String ,Map<String,String>>();
-                    stateMap.put(serverIds[2],cityMap);
-
-                    customerMap.get(serverIds[0]).put(serverIds[1],stateMap);
-
-
-                }
-
-
-            }
-            else{
+            if(!customerMap.containsKey(customerType)){ // If no customer Type is found
 
                 cityMap = new HashMap<String,String>();
-                cityMap.put(serverIds[3] , serverInfo[1]);
+                cityMap.put(city , server);
 
                 stateMap = new HashMap<String ,Map<String,String>>();
-                stateMap.put(serverIds[2],cityMap);
+                stateMap.put(state,cityMap);
 
                 countryMap = new HashMap<String, Map<String ,Map<String,String>>>();
-                countryMap.put(serverIds[1],stateMap);
+                countryMap.put(country,stateMap);
 
-                customerMap.put(serverIds[0],countryMap);
+                customerMap.put(customerType,countryMap);
             }
+            else{
+                if(!customerMap.get(customerType).containsKey(country)){ // If country for customer type does not exist
+
+                    cityMap = new HashMap<String,String>();
+                    cityMap.put(city , server);
+
+                    stateMap = new HashMap<String ,Map<String,String>>();
+                    stateMap.put(state,cityMap);
+
+                    customerMap.get(customerType).put(country,stateMap);
+
+
+                }
+                else{
+                    if(! customerMap.get(customerType).get(country).containsKey(state)){ // If state for a country does not exist
+
+                        cityMap = new HashMap<String,String>();
+                        cityMap.put(city , server);
+                        customerMap.get(customerType).get(country).put(state,cityMap);
+
+                    }
+                    else{ // State found, then add the city
+                        customerMap.get(customerType).get(country).get(state).put(city , server);
+                    }
+
+                }
+            }
+
 
 
 
