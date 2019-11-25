@@ -27,6 +27,9 @@ public class FindServer {
 
         String customer, country, state,city;
         String[] inputs =  input.split("\\.");
+        if(inputs.length!=4)
+            return "Invalid input";
+
         customer = inputs[0];
         country = inputs[1];
         state = inputs[2];
